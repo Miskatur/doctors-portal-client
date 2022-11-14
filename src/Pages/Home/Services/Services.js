@@ -13,13 +13,13 @@ const Services = () => {
             img: flouride,
         },
         {
-            id: 1,
+            id: 2,
             title: "Cavity Filling",
             description: "A cavity filling is when the dentist fills the opening in your tooth with some kind of material.",
             img: cavity,
         },
         {
-            id: 1,
+            id: 3,
             title: "Teeth Whitening",
             description: "Best Teeth Whitening At LASER DENTAL In Uttara. We Utilise World's Most Advanced Teeth Whitening System.",
             img: whitening,
