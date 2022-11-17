@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createContext } from "react";
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth'
 import app from "../firebase/Firebase.config";
+import Loading from '../Pages/Shared/Loading/Loading';
 
 export const AuthContext = createContext()
 const auth = getAuth(app)
@@ -10,7 +11,11 @@ const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null)
     const [loader, setLoader] = useState(true)
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
+    if (loader) {
+        <Loading></Loading>
+    }
 
     const createUser = (email, password) => {
         setLoader(true)
@@ -38,6 +43,10 @@ const AuthProvider = ({ children }) => {
         })
     }
 
+    const forgetPassword = (email) => {
+        return sendPasswordResetEmail(auth, email)
+    }
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
             setUser(currentUser)
@@ -49,11 +58,15 @@ const AuthProvider = ({ children }) => {
     const authInfo = {
         user,
         loader,
+        setLoader,
         createUser,
         loginUserWithEmail,
         logOut,
         updateUser,
-        signInwithGoogle
+        signInwithGoogle,
+        forgetPassword,
+        isDarkMode,
+        setIsDarkMode
 
     }
     return (

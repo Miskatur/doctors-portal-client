@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import footer from '../../../assets/images/footer.png'
+import { AuthContext } from '../../../AuthProvider/AuthProvider';
 const Footer = () => {
+    const { isDarkMode } = useContext(AuthContext)
     return (
-        <div className='bg-cover bg-no-repeat bg-center' style={{ backgroundImage: `url(${footer})` }}>
+        <div className={`bg-cover bg-no-repeat bg-center ${isDarkMode ? "text-white" : "text-black"}`} style={{ backgroundImage: `url(${footer})` }}>
             <footer className="footer lg:flex justify-between px-10 pt-12 pb-6">
                 <div>
                     <span className="footer-title">Services</span>
@@ -23,7 +25,7 @@ const Footer = () => {
                     <Link className="link link-hover">New York - 101010 Hudson</Link>
                 </div>
             </footer>
-            <p className='text-center my-10'>Copyright 2022 All Rights Reserved</p>
+            <p className='text-center py-10'>Copyright 2022 All Rights Reserved</p>
         </div>
     );
 };

@@ -1,25 +1,34 @@
+import { GoogleAuthProvider } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../AuthProvider/AuthProvider';
+import useToken from '../../hooks/useToken';
 
 const Register = () => {
-    const navigate = useNavigate()
     const { register, formState: { errors }, handleSubmit } = useForm();
-    const { createUser, updateUser } = useContext(AuthContext)
+    const { createUser, updateUser, isDarkMode, signInwithGoogle, setLoader } = useContext(AuthContext)
     const [errorMessage, setErrorMessage] = useState('')
+    const googleProvider = new GoogleAuthProvider()
+    const [createdEmail, setCreatedEmail] = useState('')
+    const navigate = useNavigate()
+    const [token] = useToken(createdEmail)
+
+    if (token) {
+        navigate('/')
+    }
 
     const handleRegister = (data) => {
         setErrorMessage('')
+        setLoader(true)
         console.log(data)
         createUser(data.email, data.password)
             .then(res => {
                 const user = res.user;
                 console.log(user)
-                handleUserInfo(data.name)
+                handleUserInfo(data.name, data.email)
                 toast.success('User created Successfully.')
-                navigate('/')
             })
             .catch(error => {
                 console.error(error)
@@ -27,10 +36,42 @@ const Register = () => {
                 setErrorMessage(message)
             })
     }
-    const handleUserInfo = name => {
+    const handleUserInfo = (name, email) => {
         updateUser(name)
-            .then(() => { })
+            .then(() => {
+                saveUser(name, email)
+                setLoader(false)
+            })
             .catch(err => console.error(err))
+    }
+
+    const handleGoogleSignIn = () => {
+        setErrorMessage('')
+        signInwithGoogle(googleProvider)
+            .then(res => {
+                const user = res.user;
+                console.log(user)
+                navigate('/')
+            })
+            .catch(error => {
+                const message = error.message;
+                setErrorMessage(message)
+            })
+    }
+
+    const saveUser = (name, email) => {
+        const user = { name, email };
+        fetch(`http://localhost:5000/users`, {
+            method: 'POST',
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify(user)
+        })
+            .then(res => res.json())
+            .then(() => {
+                setCreatedEmail(email)
+            })
     }
 
     return (
@@ -40,31 +81,31 @@ const Register = () => {
                 <form onSubmit={handleSubmit(handleRegister)}>
                     <div className="form-control w-full ">
                         <label className="label">
-                            <span className="label-text font-semibold">Full Name</span>
+                            <span className={`label-text font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>Full Name</span>
                         </label>
                         <input {...register("name", { required: true })}
                             aria-invalid={errors.name ? "true" : "false"}
                             name="name"
                             type="text"
-                            className="input input-bordered w-full" />
+                            className="input input-bordered w-full text-black" />
                         {errors.name?.type === 'required' && <p className='text-error'>Name is required</p>}
 
                     </div>
                     <div className="form-control w-full">
                         <label className="label">
-                            <span className="label-text font-semibold">Email</span>
+                            <span className={`label-text font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>Email</span>
                         </label>
                         <input {...register("email",
                             { required: "Email Address is required" })}
                             name="email"
                             type="email"
-                            className="input input-bordered w-full" />
+                            className="input input-bordered w-full text-black" />
 
                         {errors.email && <p className='text-error'>{errors.email?.message}</p>}
                     </div>
                     <div className="form-control w-full mb-5 ">
                         <label className="label">
-                            <span className="label-text font-semibold">Password</span>
+                            <span className={`label-text font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>Password</span>
                         </label>
                         <input {...register("password",
                             {
@@ -81,7 +122,7 @@ const Register = () => {
 
                             name="password"
                             type="password"
-                            className="input input-bordered w-full" />
+                            className="input text-black input-bordered w-full" />
 
                         {<p className='text-error'>{errors.password?.message}</p>}
 
@@ -95,13 +136,13 @@ const Register = () => {
 
                     <input type="submit" className='btn font-semibold text-white w-full' value="Register" />
 
-                    <p className='font-semibold text-sm my-3'>Already Have an Account? <Link className='text-secondary font-bold' to={'/login'}> Login Here</Link></p>
-
-                    <div className="divider">OR</div>
-
-                    <button className="btn btn-outline w-full">Sign In With Google</button>
 
                 </form>
+                <p className='font-semibold text-sm my-3'>Already Have an Account? <Link className='text-secondary font-bold' to={'/login'}> Login Here</Link></p>
+
+                <div className="divider">OR</div>
+
+                <button className={`btn btn-outline w-full ${isDarkMode ? 'text-white hover:text-black hover:bg-white' : 'text-black'}`} onClick={handleGoogleSignIn}>Sign In With Google</button>
             </div>
         </div>
     );

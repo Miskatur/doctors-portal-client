@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import quote from '../../../assets/icons/quote.svg'
 import people1 from '../../../assets/images/people1.png'
 import people2 from '../../../assets/images/people2.png'
 import people3 from '../../../assets/images/people3.png'
+import { AuthContext } from '../../../AuthProvider/AuthProvider';
 import Client from './Client/Client';
 
 const Testomonial = () => {
+    const { isDarkMode } = useContext(AuthContext)
 
     const clients = [
         {
@@ -36,7 +38,7 @@ const Testomonial = () => {
             <div className='flex justify-between items-center mb-16'>
                 <div>
                     <p className='text-primary font-bold uppercase'>Testimonial</p>
-                    <h2 className='text-4xl text-neutral'>What Our Patients Says</h2>
+                    <h2 className={`text-4xl ${isDarkMode ? "text-white" : "text-black"}`}>What Our Patients Says</h2>
                 </div>
                 <div>
                     <img src={quote} alt="" className='w-1/2 ml-auto' />

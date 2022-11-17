@@ -7,10 +7,12 @@ import { AuthContext } from '../../AuthProvider/AuthProvider';
 
 const Login = () => {
     const { register, formState: { errors }, handleSubmit } = useForm();
-    const { loginUserWithEmail, signInwithGoogle } = useContext(AuthContext)
+    const { loginUserWithEmail, signInwithGoogle, forgetPassword, isDarkMode } = useContext(AuthContext)
     const navigate = useNavigate()
     const location = useLocation()
     const from = location.state?.from?.pathname || '/'
+
+    const [email, setEmail] = useState('')
 
     const googleProvider = new GoogleAuthProvider()
 
@@ -32,6 +34,14 @@ const Login = () => {
             })
     }
 
+    const handleForgetPassword = () => {
+        forgetPassword(email)
+            .then(() => {
+                alert("Check your Email Or Spam Folder for reset Email.")
+            })
+            .catch(err => console.error(err))
+    }
+
     const handleGoogleSignIn = () => {
         setErrorMessage('')
         signInwithGoogle(googleProvider)
@@ -49,22 +59,22 @@ const Login = () => {
     return (
         <div className='h-[600px] flex justify-center items-center mx-5'>
             <div className='border-1 shadow-xl p-8 w-full lg:w-1/3 rounded-xl'>
-                <h2 className='text-3xl text-neutral font-semibold text-center my-3'>Login</h2>
+                <h2 className={`text-3xl ${isDarkMode ? "text-white" : "text-black"} font-semibold text-center my-3`}>Login</h2>
 
-                <form onSubmit={handleSubmit(handleLogin)}>
+                <form onSubmit={handleSubmit(handleLogin)} >
                     <div className="form-control w-full">
-                        <label className="label"><span className="label-text">Email</span></label>
+                        <label className="label"><span className={`label-text ${isDarkMode ? "text-white" : "text-black"}`}>Email</span></label>
                         <input {...register("email",
-                            { required: true })}
+                            { required: true, onBlur: (e) => setEmail(e.target.value) })}
                             aria-invalid={errors.email ? "true" : "false"}
                             type="email"
-                            className='input input-bordered' />
+                            className={`input input-bordered text-black`} />
                         {errors.email?.type === 'required' && <p className='text-error'>Email Address is required</p>}
 
                     </div>
 
                     <div className="form-control w-full mb-5">
-                        <label className="label"><span className="label-text">Password</span></label>
+                        <label className="label"><span className={`${isDarkMode ? "text-white" : "text-black"} label-text`}>Password</span></label>
                         <input {...register("password", {
                             required: "Password is required",
                             minLength: {
@@ -74,10 +84,10 @@ const Login = () => {
                         })}
                             aria-invalid={errors.password ? "true" : "false"}
                             type="password"
-                            className='input input-bordered' />
+                            className='input input-bordered text-black' />
                         {errors.password && <p className='text-error'>{errors.password?.message}</p>}
 
-                        <label className="label text-xs font-semibold"><span className="label-text">Forgot Password?</span></label>
+                        <label className="label text-xs font-semibold"><span className={`label-text cursor-pointer hover:text-error ${isDarkMode ? 'text-white' : 'text-black'}`} ><p onClick={handleForgetPassword}>Forgot Password?</p></span></label>
                         {
                             errorMessage &&
                             <p className='text-error'>{errorMessage}</p>
@@ -89,7 +99,7 @@ const Login = () => {
 
                 <p className='text-center my-3'>Haven't an Account? <Link className='font-bold text-secondary' to={'/register'}>Register Now</Link></p>
                 <div className="divider">OR</div>
-                <button className="btn btn-outline w-full" onClick={handleGoogleSignIn}>Sign In With Google</button>
+                <button className={`btn btn-outline w-full ${isDarkMode ? 'text-white hover:text-black hover:bg-white' : 'text-black'}`} onClick={handleGoogleSignIn}>Sign In With Google</button>
             </div>
         </div>
     );

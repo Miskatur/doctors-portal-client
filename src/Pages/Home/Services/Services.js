@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import flouride from '../../../assets/images/fluoride.png'
 import whitening from '../../../assets/images/whitening.png'
 import cavity from '../../../assets/images/cavity.png'
 import Service from './Service/Service';
+import { AuthContext } from '../../../AuthProvider/AuthProvider';
 
 const Services = () => {
+    const { isDarkMode } = useContext(AuthContext)
     const services = [
         {
             id: 1,
@@ -29,7 +31,7 @@ const Services = () => {
         <div className='my-20'>
             <div className='text-center'>
                 <h3 className='uppercase text-primary font-bold text-xl'>Our Services</h3>
-                <h1 className=' text-neutral text-4xl my-5'>Services We Provide</h1>
+                <h1 className={` ${isDarkMode ? "text-white" : "text-black"} text-4xl my-5`}>Services We Provide</h1>
             </div>
             <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-7 my-20'>
                 {

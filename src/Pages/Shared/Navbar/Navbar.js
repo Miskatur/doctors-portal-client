@@ -2,9 +2,11 @@ import React, { useContext } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../AuthProvider/AuthProvider';
+import { FaSun, FaMoon } from 'react-icons/fa';
+
 
 const Navbar = () => {
-    const { user, logOut } = useContext(AuthContext)
+    const { user, logOut, isDarkMode, setIsDarkMode } = useContext(AuthContext)
 
     const handleLogOut = () => {
         logOut()
@@ -13,6 +15,7 @@ const Navbar = () => {
             })
             .catch(err => console.error(err))
     }
+
 
     const menuItems = <>
         <li><Link to={'/'}>Home</Link></li>
@@ -27,16 +30,22 @@ const Navbar = () => {
                 <li onClick={handleLogOut}><Link>Log Out</Link></li></> :
                 <li><Link to={'/login'}>Login</Link></li>
         }
+        <li className='flex justify-center items-center' >
+
+            <button onClick={() => setIsDarkMode(!isDarkMode)}>
+                {isDarkMode ? <FaSun /> : <FaMoon />}
+            </button>
+        </li>
 
     </>
     return (
-        <div className="navbar bg-base-100">
+        <div className={`navbar ${isDarkMode ? "bg-gray-800 text-white" : "bg-base-100 text-black"}`}>
             <div className="navbar-start">
                 <div className="dropdown">
                     <label tabIndex={0} className="btn btn-ghost md:hidden">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
                     </label>
-                    <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+                    <ul tabIndex={1} className={`menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 ${isDarkMode ? "bg-gray-800 text-white" : "bg-base-100 text-black"}`}>
                         {menuItems}
                     </ul>
                 </div>
@@ -47,6 +56,9 @@ const Navbar = () => {
                     {menuItems}
                 </ul>
             </div>
+            <label htmlFor="dashboard-drawer" tabIndex={2} className="btn btn-ghost md:hidden ml-auto drawer-button">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg></label>
+
 
         </div>
     );

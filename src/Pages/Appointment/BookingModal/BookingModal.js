@@ -1,10 +1,12 @@
 import { format } from 'date-fns';
-import React from 'react';
+import React, { useContext } from 'react';
+import toast from 'react-hot-toast';
+import { AuthContext } from '../../../AuthProvider/AuthProvider';
 
-const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
+const BookingModal = ({ treatment, setTreatment, selectedDate, refetch }) => {
     const date = format(selectedDate, 'PP')
     const { name, slots } = treatment; //treatment is appointment options
-
+    const { user, isDarkMode } = useContext(AuthContext)
     const handleBooking = event => {
         event.preventDefault()
         const form = event.target;
@@ -22,8 +24,26 @@ const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
         }
         //TODO: Send data to server and once data is saved 
         // then close the modal and display success toast
-        console.log(booking);
-        setTreatment(null)
+
+        fetch(`http://localhost:5000/bookings`, {
+            method: 'POST',
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify(booking)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                if (data.acknowledged) {
+                    setTreatment(null)
+                    toast.success('Appointment booked Successfully.')
+                    refetch()
+                }
+                else {
+                    toast.error(data.message)
+                }
+            })
     }
 
     return (
@@ -32,7 +52,7 @@ const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
             <div className="modal">
                 <div className="modal-box relative">
                     <label htmlFor="booking-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-                    <h3 className="text-lg font-bold text-neutral">{name}</h3>
+                    <h3 className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>{name}</h3>
                     <form onSubmit={handleBooking}>
                         <input type="text" placeholder="date" value={date} className="input input-bordered w-full my-5 font-semibold " disabled />
 
@@ -48,11 +68,11 @@ const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
 
                         </select>
 
-                        <input type="text" name='name' placeholder="Full Name" className="input input-bordered font-semibold text-neutral w-full mb-5" required />
+                        <input type="text" name='name' defaultValue={user?.displayName} placeholder="Full Name" className={`input input-bordered font-semibold ${isDarkMode ? "text-white" : "text-black"} w-full mb-5`} readOnly />
 
-                        <input type="number" name='phone' placeholder="Phone Number" className="input input-bordered font-semibold text-neutral w-full mb-5 " required />
+                        <input type="number" name='phone' placeholder="Phone Number" className={`input input-bordered font-semibold ${isDarkMode ? "text-white" : "text-black"} w-full mb-5 `} required />
 
-                        <input type="email" name='email' placeholder="Email" className="input input-bordered font-semibold text-neutral w-full mb-5" required />
+                        <input type="email" name='email' placeholder='Your Email' defaultValue={user?.email} className={`input input-bordered font-semibold ${isDarkMode ? "text-white" : "text-black"} w-full mb-5`} readOnly />
                         <input type="submit" value="Submit" className='btn text-white font-semibold w-full' />
                     </form>
                 </div>
