@@ -11,7 +11,9 @@ const Navbar = () => {
     const handleLogOut = () => {
         logOut()
             .then(() => {
+                localStorage.removeItem('accessToken')
                 toast.success("User Logged Out Successfully")
+
             })
             .catch(err => console.error(err))
     }
@@ -20,12 +22,12 @@ const Navbar = () => {
     const menuItems = <>
         <li><Link to={'/'}>Home</Link></li>
         <li><Link to={'/appointment'}>Appointment</Link></li>
-        <li><Link to={'/about'}>About</Link></li>
         <li><Link to='/contactus'>Contact Us</Link></li>
 
         {
             user?.email ? <>
                 <li><Link to={'/reviews'}>Reviews</Link></li>
+                <li><Link to={'/dashboard'}>Dashboard</Link></li>
                 <li><Link className='font-semibold'>{user?.displayName}</Link></li>
                 <li onClick={handleLogOut}><Link>Log Out</Link></li></> :
                 <li><Link to={'/login'}>Login</Link></li>
