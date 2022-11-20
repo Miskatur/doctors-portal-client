@@ -2,10 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { FaTrashAlt } from 'react-icons/fa';
+import Loading from '../../Shared/Loading/Loading';
 
 const AllUsers = () => {
 
-    const { data: users = [], refetch } = useQuery({
+    const { data: users = [], refetch, isLoading } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
             const res = await fetch(`https://doctors-portal-server-chi.vercel.app/users`, {
@@ -17,6 +18,9 @@ const AllUsers = () => {
             return data
         }
     })
+    if (isLoading) {
+        return <Loading></Loading>
+    }
 
     const handleMakeAdmin = id => {
         fetch(`https://doctors-portal-server-chi.vercel.app/users/admin/${id}`, {
