@@ -47,7 +47,7 @@ const AllUsers = () => {
     }
 
     const handleDeleteUser = user => {
-        fetch(`http://localhost:5000/users/admin/${user?._id}`, {
+        fetch(`https://doctors-portal-server-chi.vercel.app/users/admin/${user?._id}`, {
             method: 'DELETE',
             headers: {
                 authorization: `bearer ${localStorage.getItem('accessToken')}`

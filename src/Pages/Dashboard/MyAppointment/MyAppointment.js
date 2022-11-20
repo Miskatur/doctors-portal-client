@@ -26,7 +26,7 @@ const MyAppointment = () => {
 
     const [deletingAppointment, setDeletingAppointment] = useState(null)
     const handleDeleteAppointment = booking => {
-        fetch(`http://localhost:5000/booking/${booking._id}`, {
+        fetch(`https://doctors-portal-server-chi.vercel.app/booking/${booking._id}`, {
             method: 'DELETE'
         })
             .then(res => res.json())
