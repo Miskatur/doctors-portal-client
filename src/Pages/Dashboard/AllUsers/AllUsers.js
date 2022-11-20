@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { FaTrashAlt } from 'react-icons/fa';
+import ConfirmationModal from '../../Shared/ConfirmationModal/ConfirmationModal';
 import Loading from '../../Shared/Loading/Loading';
 
 const AllUsers = () => {
+    const [deletingUser, setDeletingUser] = useState(null)
 
     const { data: users = [], refetch, isLoading } = useQuery({
         queryKey: ['users'],
@@ -40,6 +42,25 @@ const AllUsers = () => {
                 }
             })
     }
+    const closeModal = () => {
+        setDeletingUser(null)
+    }
+
+    const handleDeleteUser = user => {
+        fetch(`http://localhost:5000/users/admin/${user?._id}`, {
+            method: 'DELETE',
+            headers: {
+                authorization: `bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data?.deletedCount > 0) {
+                    toast.success(`You have succesfully deleted ${user?.name}`)
+                    refetch()
+                }
+            })
+    }
 
     return (
         <div>
@@ -65,7 +86,11 @@ const AllUsers = () => {
                                     <td>{
                                         user?.role !== 'admin' && <button className='btn btn-xs btn-outline font-bold' onClick={() => handleMakeAdmin(user._id)}>Make Admin</button>
                                     }</td>
-                                    <td><button className='btn btn-ghost text-red-600'><FaTrashAlt /></button></td>
+                                    <td>
+                                        <label onClick={() => setDeletingUser(user)} htmlFor="confirmation-modal" className="btn btn-ghost ">
+                                            <FaTrashAlt className='text-lg text-red-600' />
+                                        </label>
+                                    </td>
                                 </tr>
                             )
                         }
@@ -74,7 +99,18 @@ const AllUsers = () => {
                     </tbody>
                 </table>
             </div>
+            {
+                deletingUser &&
+                <ConfirmationModal
+                    title={`Are you Sure You want to Delete`}
+                    message={`If you delete ${deletingUser?.name}, it can not be undone again.`}
+                    successAction={handleDeleteUser}
+                    successButtonName={`Delete`}
+                    modalData={deletingUser}
+                    closeModal={closeModal}
+                ></ConfirmationModal>
 
+            }
 
         </div>
     );

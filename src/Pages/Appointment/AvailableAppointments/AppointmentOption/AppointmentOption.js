@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../../AuthProvider/AuthProvider';
 
 const AppointmentOption = ({ option, setTreatment }) => {
-    const { name, slots } = option;
+    const { name, slots, price } = option;
     const { isDarkMode, user } = useContext(AuthContext)
     return (
         <div>
@@ -11,6 +11,7 @@ const AppointmentOption = ({ option, setTreatment }) => {
                 <div className="card-body items-center text-center">
                     <h2 className="card-title text-secondary">{name}</h2>
                     <p className={`${isDarkMode ? "text-white" : " text-black"}`}>{slots?.length > 0 ? slots[0] : 'Try Another day.'}</p>
+                    <p><small>Price: ${price}</small></p>
                     <p className={`uppercase text-xs ${isDarkMode ? "text-white" : " text-black"} font-mono`}>{slots?.length} {slots.length > 1 ? "spaces " : "space"} available</p>
                     <div className="card-actions mt-3">
                         {
