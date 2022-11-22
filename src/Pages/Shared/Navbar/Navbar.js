@@ -22,11 +22,11 @@ const Navbar = () => {
     const menuItems = <>
         <li><Link to={'/'}>Home</Link></li>
         <li><Link to={'/appointment'}>Appointment</Link></li>
-        <li><Link to='/contactus'>Contact Us</Link></li>
+        {/* <li><Link to='/contactus'>Contact Us</Link></li> */}
 
         {
             user?.email ? <>
-                <li><Link to={'/reviews'}>Reviews</Link></li>
+                {/* <li><Link to={'/reviews'}>Reviews</Link></li> */}
                 <li><Link to={'/dashboard'}>Dashboard</Link></li>
                 <li><Link className='font-semibold'>{user?.displayName}</Link></li>
                 <li onClick={handleLogOut}><Link>Log Out</Link></li></> :

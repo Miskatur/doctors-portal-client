@@ -56,7 +56,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/dashboard/adddoctor',
-                element: <PrivateRoute><AddDoctor></AddDoctor></PrivateRoute>
+                element: <AdminRoute><AddDoctor></AddDoctor></AdminRoute>
             },
             {
                 path: '/dashboard/managedoctors',
