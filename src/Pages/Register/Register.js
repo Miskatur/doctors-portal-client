@@ -51,6 +51,7 @@ const Register = () => {
             .then(res => {
                 const user = res.user;
                 console.log(user)
+                saveUser(user.displayName, user.email)
                 navigate('/')
             })
             .catch(error => {

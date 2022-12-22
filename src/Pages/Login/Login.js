@@ -54,7 +54,8 @@ const Login = () => {
         signInwithGoogle(googleProvider)
             .then(res => {
                 const user = res.user;
-                console.log(user)
+                console.log(user.email)
+                setLoginUserEmail(user.email)
                 navigate(from, { replace: true })
             })
             .catch(error => {
